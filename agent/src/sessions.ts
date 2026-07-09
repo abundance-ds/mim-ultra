@@ -9,8 +9,9 @@ import {
 import { join } from "path";
 import { randomUUID } from "crypto";
 import type { CoreMessage } from "ai";
+import { agentPath } from "./paths.js";
 
-const SESSIONS_DIR = process.env.MIM_SESSIONS_DIR ?? "agent/sessions/ui";
+const SESSIONS_DIR = process.env.MIM_SESSIONS_DIR ?? agentPath("sessions", "ui");
 const ACTIVE_SESSION_FILE = ".active-session";
 
 export type SessionMeta = {

@@ -2,6 +2,23 @@
 set -e
 
 mkdir -p /tmp/mim
+mkdir -p /agent /shared/vault
+
+if [ ! -f /agent/AGENTS.md ] && [ -d /agent-seed ]; then
+    cp -a /agent-seed/. /agent/
+fi
+
+if [ ! -e /agent/node_modules ]; then
+    ln -s /app/node_modules /agent/node_modules
+fi
+
+ln -sfn /agent /app/agent
+
+export MIM_APP_DIR=/app
+export MIM_AGENT_HOME=/agent
+export MIM_AGENT_DIR=/agent
+export MIM_SHARED_HOME=/shared
+export MIM_SECRET_VAULT="${MIM_SECRET_VAULT:-/shared/vault/secrets.vault.json}"
 
 # Start desktop in background
 bash /app/start-desktop.sh &
@@ -24,5 +41,5 @@ set +a
 gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark" 2>/dev/null || true
 gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
 
-cd /app
-exec npx tsx src/server.ts
+cd /agent
+exec /app/node_modules/.bin/tsx src/server.ts

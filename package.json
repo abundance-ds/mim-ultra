@@ -4,9 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "agent": "tsx src/cli.ts",
-    "serve": "tsx src/server.ts",
-    "mim": "tsx src/tool-cli.ts"
+    "agent": "tsx agent/src/cli.ts",
+    "serve": "tsx agent/src/server.ts",
+    "mim": "tsx agent/src/tool-cli.ts"
   },
   "dependencies": {
     "ai": "4.1.66",

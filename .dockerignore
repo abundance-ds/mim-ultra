@@ -4,7 +4,8 @@ node_modules
 .env.local
 *.log
 .DS_Store
-agent/secrets.vault.json
 agent/sessions/
 agent/current-session
+agent/secrets.vault.json
+shared/vault/
 shared/

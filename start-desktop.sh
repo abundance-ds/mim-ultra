@@ -9,14 +9,19 @@ export GTK_MODULES=gail:atk-bridge
 export NO_AT_BRIDGE=0
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [ -z "${MIM_REPO_DIR:-}" ]; then
-  if [ -f "$SCRIPT_DIR/src/server.ts" ]; then
-    MIM_REPO_DIR="$SCRIPT_DIR"
+MIM_APP_DIR="${MIM_APP_DIR:-$SCRIPT_DIR}"
+if [ -z "${MIM_AGENT_DIR:-}" ]; then
+  if [ -f /agent/src/server.ts ]; then
+    MIM_AGENT_DIR="/agent"
+  elif [ -f "$SCRIPT_DIR/agent/src/server.ts" ]; then
+    MIM_AGENT_DIR="$SCRIPT_DIR/agent"
+  elif [ -f "$SCRIPT_DIR/src/server.ts" ]; then
+    MIM_AGENT_DIR="$SCRIPT_DIR"
   else
-    MIM_REPO_DIR="/Users/waqr/Desktop/mims/mim-ubuntu"
+    MIM_AGENT_DIR="/agent"
   fi
 fi
-export MIM_REPO_DIR
+export MIM_APP_DIR MIM_AGENT_DIR MIM_AGENT_HOME="${MIM_AGENT_HOME:-$MIM_AGENT_DIR}"
 
 CONFIG_DIR="/usr/local/share/mim/desktop"
 WALLPAPER="/usr/local/share/mim/wallpaper.png"
@@ -74,7 +79,7 @@ sleep 1
 if command -v ttyd >/dev/null 2>&1 && command -v tmux >/dev/null 2>&1; then
   pkill -f "ttyd .*7681" 2>/dev/null || true
   tmux has-session -t claude 2>/dev/null ||
-    tmux new-session -d -s claude "bash '$MIM_REPO_DIR/scripts/claude-code-session.sh'"
+    tmux new-session -d -s claude "MIM_AGENT_DIR='$MIM_AGENT_DIR' MIM_AGENT_HOME='$MIM_AGENT_HOME' bash '$MIM_APP_DIR/scripts/claude-code-session.sh'"
   ttyd -p 7681 -t titleFixed="claude code" \
     tmux attach-session -t claude &
   sleep 1

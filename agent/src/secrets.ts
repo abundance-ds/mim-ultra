@@ -14,6 +14,7 @@ import {
   randomUUID,
   scryptSync,
 } from "crypto";
+import { defaultSecretVaultPath } from "./paths.js";
 
 export type SecretEntry = {
   id: string;
@@ -56,7 +57,7 @@ type OpenVault = {
   entries: SecretEntry[];
 };
 
-const VAULT_PATH = process.env.MIM_SECRET_VAULT ?? "agent/secrets.vault.json";
+const VAULT_PATH = process.env.MIM_SECRET_VAULT ?? defaultSecretVaultPath();
 let openVault: OpenVault | null = null;
 
 function deriveKey(passphrase: string, salt: Buffer): Buffer {

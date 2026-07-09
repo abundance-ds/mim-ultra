@@ -130,7 +130,7 @@ sleep 1
 orbctl run -m "$VM_NAME" bash -c "
 cp '$SCRIPT_DIR/start-desktop.sh' /tmp/start-desktop.sh
 chmod +x /tmp/start-desktop.sh
-MIM_REPO_DIR='$SCRIPT_DIR' nohup /tmp/start-desktop.sh > /tmp/desktop.log 2>&1 &
+MIM_APP_DIR='$SCRIPT_DIR' MIM_AGENT_DIR='$SCRIPT_DIR/agent' MIM_AGENT_HOME='$SCRIPT_DIR/agent' nohup /tmp/start-desktop.sh > /tmp/desktop.log 2>&1 &
 "
 echo "Waiting for desktop to start..."
 sleep 8
@@ -163,7 +163,9 @@ export NO_AT_BRIDGE=0
 ps -eo pid=,args= | awk 'index(\$0, \"tsx src/\" \"server.ts\") && \$0 !~ /awk/ { print \$1 }' | xargs -r kill -TERM 2>/dev/null || true
 sleep 1
 cd '$SCRIPT_DIR'
-SERVER_ENTRY=src/server.ts
+export MIM_AGENT_HOME='$SCRIPT_DIR/agent'
+export MIM_AGENT_DIR='$SCRIPT_DIR/agent'
+SERVER_ENTRY=agent/src/server.ts
 nohup setsid npx tsx \"\$SERVER_ENTRY\" > /tmp/mim-server.log 2>&1 < /dev/null &
 sleep 1
 ss -tlnp | grep -q 7080 && echo '  Agent server: OK' || echo '  Agent server: FAILED'

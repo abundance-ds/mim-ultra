@@ -34,6 +34,8 @@ __pycache__/
 .env.local
 credentials.json
 agent/secrets.vault.json
+shared/vault/*
+!shared/vault/.gitkeep
 
 # Binaries / releases
 *.AppImage

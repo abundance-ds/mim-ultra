@@ -8,7 +8,7 @@ export DISPLAY="${DISPLAY:-:99}"
 xset s off s noblank >/dev/null 2>&1 || true
 xfce4-screensaver-command --deactivate >/dev/null 2>&1 || true
 
-for pattern in "node .*scripts/trace-agent.ts"; do
+for pattern in "node .*agent/scripts/trace-agent.ts"; do
   ps -eo pid=,args= | awk -v pat="$pattern" '$0 ~ pat { print $1 }' | xargs -r kill -TERM 2>/dev/null || true
 done
 

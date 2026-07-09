@@ -9,7 +9,7 @@ import {
 } from "../src/context.js";
 
 function usage(): never {
-  console.error("Usage: npx tsx scripts/trace-agent.ts --out <path> <task>");
+  console.error("Usage: npx tsx agent/scripts/trace-agent.ts --out <path> <task>");
   process.exit(1);
 }
 

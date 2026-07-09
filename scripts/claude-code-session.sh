@@ -1,5 +1,5 @@
 #!/bin/bash
-# Browser terminal entrypoint for Claude Code inside the agent desktop VM.
+# Browser terminal entrypoint for Claude Code.
 set -e
 
 if [ -f /tmp/mim-desktop.env ]; then
@@ -12,11 +12,19 @@ export DISPLAY="${DISPLAY:-:99}"
 export GTK_MODULES="${GTK_MODULES:-gail:atk-bridge}"
 export NO_AT_BRIDGE="${NO_AT_BRIDGE:-0}"
 
-REPO_DIR="${MIM_REPO_DIR:-/Users/waqr/Desktop/mims/mim-ubuntu}"
-if ! cd "$REPO_DIR" 2>/dev/null; then
-  echo "Could not cd to repo: $REPO_DIR"
+AGENT_DIR="${MIM_AGENT_DIR:-${MIM_AGENT_HOME:-/agent}}"
+if ! cd "$AGENT_DIR" 2>/dev/null; then
+  echo "Could not cd to agent home: $AGENT_DIR"
   exec bash -l
 fi
+
+load_env_file() {
+  local file="$1"
+  [ -f "$file" ] || return 0
+  set -a
+  . "$file"
+  set +a
+}
 
 load_env_var() {
   local name="$1"
@@ -31,12 +39,13 @@ load_env_var() {
   export "$name=$value"
 }
 
-if [ -f .env ]; then
-  [ -n "${ANTHROPIC_API_KEY:-}" ] || load_env_var ANTHROPIC_API_KEY
-fi
+load_env_file "/app/.env"
+load_env_file "$AGENT_DIR/.env"
+load_env_file "$AGENT_DIR/config/env"
+[ -n "${ANTHROPIC_API_KEY:-}" ] || load_env_var ANTHROPIC_API_KEY
 
 if ! command -v claude >/dev/null 2>&1; then
-  echo "Claude Code is not installed. Run ./setup.sh or install @anthropic-ai/claude-code in the VM."
+  echo "Claude Code is not installed."
   exec bash -l
 fi
 

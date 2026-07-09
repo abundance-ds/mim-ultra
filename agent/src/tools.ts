@@ -48,7 +48,7 @@ const run = (
 };
 
 export const bash = tool({
-  description: "Shell. Optional front flags before --. Compact output by default. Full output saved under `agent/sessions/tool-output/` (unless disabled).",
+  description: "Shell. Optional front flags before --. Compact output by default. Full output saved under `/agent/sessions/tool-output/` (unless disabled).",
   parameters: z.object({
     command: z.string(),
   }),

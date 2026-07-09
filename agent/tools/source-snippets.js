@@ -5,7 +5,7 @@ import { spawnSync } from "node:child_process";
 const args = process.argv.slice(2);
 
 if (args.length < 1 || args[0] === "-h" || args[0] === "--help") {
-  console.log("Usage: node agent/tools/source-snippets.js <url> [term ...]");
+  console.log("Usage: node /agent/tools/source-snippets.js <url> [term ...]");
   console.log("Fetch a source URL and print a compact title/description plus matched snippets.");
   process.exit(args.length < 1 ? 1 : 0);
 }

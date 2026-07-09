@@ -7,6 +7,7 @@ import {
   parsePositiveInt,
   tokenizeCommand,
 } from "./command.js";
+import { agentPath } from "./paths.js";
 
 export type ToolOutputOptions = {
   limit?: number;
@@ -31,7 +32,7 @@ export const TOOL_MAX_BUFFER = parsePositiveInt(
   16 * 1024 * 1024
 );
 
-const OUTPUT_DIR = process.env.MIM_TOOL_OUTPUT_DIR ?? "agent/sessions/tool-output";
+const OUTPUT_DIR = process.env.MIM_TOOL_OUTPUT_DIR ?? agentPath("sessions", "tool-output");
 const SAVE_TRUNCATED_OUTPUTS = parseBooleanEnv(process.env.MIM_SAVE_TRUNCATED_OUTPUTS, true);
 
 function slug(value: string): string {

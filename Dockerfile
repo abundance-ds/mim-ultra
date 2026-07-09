@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Node.js 22
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y --no-install-recommends nodejs && \
+    npm install -g @anthropic-ai/claude-code && \
     rm -rf /var/lib/apt/lists/*
 
 # Native C tool
@@ -54,14 +55,16 @@ RUN mkdir -p /root/.config/bspwm /root/.config/sxhkd /root/.config/polybar \
 </channel>\n' > /root/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml
 
 WORKDIR /app
-RUN mkdir -p /shared
+RUN mkdir -p /agent /agent-seed /shared
 
 # Node dependencies (cached unless package.json changes)
-COPY package.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
-# Everything else
-COPY . .
+# Runtime shell and initial agent seed.
+COPY docker-entrypoint.sh start-desktop.sh ./
+COPY scripts/claude-code-session.sh /app/scripts/claude-code-session.sh
+COPY agent/ /agent-seed/
 
 EXPOSE 6080 7080 7681
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

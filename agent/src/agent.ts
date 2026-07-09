@@ -3,6 +3,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { readFileSync, existsSync } from "fs";
 import { allTools } from "./tools.js";
 import { parsePositiveInt } from "./command.js";
+import { agentPath } from "./paths.js";
 
 if (existsSync(".env")) {
   for (const line of readFileSync(".env", "utf-8").split("\n")) {
@@ -14,7 +15,7 @@ if (existsSync(".env")) {
 export const MODEL = process.env.MODEL ?? "claude-sonnet-4-6";
 export const MAX_STEPS = parsePositiveInt(process.env.MAX_STEPS, 1_000_000);
 
-export const systemPrompt = readFileSync("AGENTS.md", "utf-8");
+export const systemPrompt = readFileSync(agentPath("AGENTS.md"), "utf-8");
 
 export function runAgent(
   messages: CoreMessage[],

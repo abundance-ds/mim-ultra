@@ -7,9 +7,6 @@ services:
       - "${TTYD_PORT:-7690}:7681"
     env_file: .env
     volumes:
-      - agent-data:/app/agent
+      - ./agent:/agent
       - ./shared:/shared
     restart: unless-stopped
-
-volumes:
-  agent-data:
