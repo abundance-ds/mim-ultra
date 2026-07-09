@@ -18,26 +18,9 @@ if ! cd "$AGENT_DIR" 2>/dev/null; then
   exec bash -l
 fi
 
-load_env_file() {
-  local file="$1"
-  [ -f "$file" ] || return 0
-  set -a
-  . "$file"
-  set +a
-}
-
-load_env_var() {
-  local name="$1"
-  local line value
-  line="$(grep -E "^${name}=" .env 2>/dev/null | tail -n 1 || true)"
-  [ -n "$line" ] || return 0
-  value="${line#*=}"
-  value="${value%\"}"
-  value="${value#\"}"
-  value="${value%\'}"
-  value="${value#\'}"
-  export "$name=$value"
-}
+# The AI SDK server uses Docker's .env. Claude Code should use its
+# persistent browser/subscription auth in /agent/home instead.
+unset ANTHROPIC_API_KEY
 
 if ! command -v claude >/dev/null 2>&1; then
   echo "Claude Code is not installed."
@@ -48,18 +31,13 @@ if [ -n "${MIM_CLAUDE_FLAGS:-}" ]; then
   # shellcheck disable=SC2206
   CLAUDE_ARGS=($MIM_CLAUDE_FLAGS)
 else
-  CLAUDE_ARGS=(--dangerously-skip-permissions --add-dir "$AGENT_DIR")
+  CLAUDE_ARGS=(--dangerously-skip-permissions --permission-mode bypassPermissions --add-dir "$AGENT_DIR")
 fi
 
 PROMPT_FILE="${MIM_CLAUDE_PROMPT_FILE:-$AGENT_DIR/AGENTS.md}"
 if [ -f "$PROMPT_FILE" ]; then
   CLAUDE_ARGS+=(--append-system-prompt "$(cat "$PROMPT_FILE")")
 fi
-
-echo "Starting Claude Code in $PWD"
-printf "Flags:"
-printf " %q" "${CLAUDE_ARGS[@]}"
-echo
 
 set +e
 claude "${CLAUDE_ARGS[@]}"
