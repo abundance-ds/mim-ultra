@@ -4,6 +4,10 @@ node_modules
 .env.local
 *.log
 .DS_Store
+.claude/
+agent/home/
+agent/browser-profile/
+agent/node_modules
 agent/sessions/
 agent/current-session
 agent/secrets.vault.json

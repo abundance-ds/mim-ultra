@@ -42,7 +42,9 @@ shared/vault/*
 *.AppImage
 
 # Runtime state
+/.claude/
 agent/home/
+agent/browser-profile/
 agent/sessions/
 shared/mailbox/*
 shared/artifacts/*
