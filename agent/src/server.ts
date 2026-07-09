@@ -33,6 +33,11 @@ import {
 } from "./sessions.js";
 
 const PORT = parseInt(process.env.PORT ?? "7080", 10);
+const PUBLIC_CONFIG = {
+  mimPort: process.env.MIM_PUBLIC_PORT ?? "7090",
+  vncPort: process.env.VNC_PUBLIC_PORT ?? "6090",
+  ttydPort: process.env.TTYD_PUBLIC_PORT ?? "7690",
+};
 const UI_HTML = readFileSync(new URL("./ui.html", import.meta.url), "utf-8");
 const VNC_HTML = readFileSync(new URL("./vnc.html", import.meta.url), "utf-8");
 const NOVNC_ROOT = resolve("/usr/share/novnc");
@@ -696,6 +701,9 @@ const server = createServer(async (req, res) => {
     const pathname = url.pathname;
     if (pathname === "/api/chat" && req.method === "POST") {
       await handleChat(req, res);
+    } else if (pathname === "/api/config") {
+      res.writeHead(200, { "Content-Type": "application/json", "Cache-Control": "no-store" });
+      res.end(JSON.stringify(PUBLIC_CONFIG));
     } else if (pathname === "/api/status") {
       handleStatus(req, res);
     } else if (pathname === "/api/reset" && req.method === "POST") {
@@ -708,7 +716,7 @@ const server = createServer(async (req, res) => {
       await handleSecrets(req, res, pathname);
     } else if (pathname === "/vnc" || pathname === "/vnc.html") {
       res.writeHead(200, { "Content-Type": "text/html", "Cache-Control": "no-store" });
-      res.end(VNC_HTML);
+      res.end(VNC_HTML.replaceAll("__VNC_PUBLIC_PORT__", PUBLIC_CONFIG.vncPort));
     } else if (pathname.startsWith("/novnc/")) {
       handleNoVncAsset(pathname, res);
     } else if (pathname === "/") {

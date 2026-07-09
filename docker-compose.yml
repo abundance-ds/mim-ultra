@@ -6,6 +6,10 @@ services:
       - "${VNC_PORT:-6090}:6080"
       - "${TTYD_PORT:-7690}:7681"
     env_file: .env
+    environment:
+      MIM_PUBLIC_PORT: "${MIM_PORT:-7090}"
+      VNC_PUBLIC_PORT: "${VNC_PORT:-6090}"
+      TTYD_PUBLIC_PORT: "${TTYD_PORT:-7690}"
     volumes:
       - ./agent:/agent
       - ./shared:/shared

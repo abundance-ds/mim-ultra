@@ -58,6 +58,7 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 │   └── sessions.ts
 ├── tools/
 ├── scripts/
+├── home/
 └── sessions/
 
 /shared
@@ -73,6 +74,7 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 - `AGENTS.md` lives in `/agent`, so prompt edits persist.
 - Agent-editable source lives in `/agent/src`, so tool/server changes persist.
 - Agent-authored helper tools live in `/agent/tools`.
+- Claude Code home/config lives in `/agent/home`.
 - Sessions and tool output live in `/agent/sessions`.
 - Shared passwords live in `/shared/vault/secrets.vault.json`, encrypted.
 - Cross-agent files live under `/shared`.

@@ -1099,6 +1099,19 @@ async function fetchJson(url, options) {
 const ICON_DETACH = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"/><rect x="14" y="14" width="6" height="4" rx="1"/></svg>`;
 const ICON_DOCK = `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M15 4v16"/></svg>`;
 
+const runtimeConfig = {
+  vncPort: "6090",
+  ttydPort: "7690",
+};
+
+async function loadRuntimeConfig() {
+  try {
+    const data = await fetchJson("/api/config");
+    runtimeConfig.vncPort = data.vncPort || runtimeConfig.vncPort;
+    runtimeConfig.ttydPort = data.ttydPort || runtimeConfig.ttydPort;
+  } catch {}
+}
+
 /* ── Chat mode: docked | detached | hidden ───────────────── */
 let chatMode = "docked";
 let lastVisibleMode = "docked";
@@ -1107,7 +1120,7 @@ let panelView = "chat";
 
 function panelTerminalUrl() {
   const host = location.hostname.includes(":") ? `[${location.hostname}]` : location.hostname;
-  return `http://${host}:7681/`;
+  return `${location.protocol}//${host}:${runtimeConfig.ttydPort}/`;
 }
 
 function setChatTitle(title) {
@@ -1396,7 +1409,7 @@ function clearTranscriptView() {
 
 /* ── boot: desktop + status ───────────────────────────────── */
 function loadDesktop() {
-  desktopFrame.src = `/vnc?${new URLSearchParams({ scale: "1" })}`;
+  desktopFrame.src = `/vnc?${new URLSearchParams({ scale: "1", port: runtimeConfig.vncPort })}`;
 }
 
 async function loadStatus() {
@@ -2026,11 +2039,14 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* ── boot ─────────────────────────────────────────────────── */
-loadChatPrefs();
-loadDesktop();
-loadStatus();
-loadCurrentSession();
-setInterval(loadStatus, 4000);
+(async function boot() {
+  loadChatPrefs();
+  await loadRuntimeConfig();
+  loadDesktop();
+  loadStatus();
+  loadCurrentSession();
+  setInterval(loadStatus, 4000);
+})();
 </script>
 </body>
 </html>

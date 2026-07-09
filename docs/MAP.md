@@ -30,6 +30,7 @@
 ├── src/
 ├── tools/
 ├── scripts/
+├── home/
 └── sessions/
 ```
 

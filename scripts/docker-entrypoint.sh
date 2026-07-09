@@ -2,7 +2,14 @@
 set -e
 
 mkdir -p /tmp/mim
-mkdir -p /agent /shared/vault
+mkdir -p /agent /agent/home /shared/vault
+
+if id agent >/dev/null 2>&1; then
+    mkdir -p /home/agent
+    chown -R agent:agent /home/agent
+    find /agent /shared -type d -exec chmod a+rwx {} + 2>/dev/null || true
+    find /agent /shared -type f -exec chmod a+rw {} + 2>/dev/null || true
+fi
 
 if [ ! -f /agent/AGENTS.md ] && [ -d /agent-seed ]; then
     cp -a /agent-seed/. /agent/

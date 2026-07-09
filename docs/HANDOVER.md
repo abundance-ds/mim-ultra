@@ -28,6 +28,7 @@ If a file changes agent behavior or memory, it belongs in `/agent`. If multiple 
 - `/agent/CLAUDE.md` delegates Claude Code to `AGENTS.md`.
 - `/agent/src` is mutable agent/server/tool code.
 - `/agent/tools` is for agent-authored helper scripts.
+- `/agent/home` is Claude Code's persistent home/config.
 - `/agent/sessions` stores UI sessions and tool output.
 - `/shared/vault/secrets.vault.json` is the shared encrypted password vault.
 - `/shared/mailbox`, `/shared/artifacts`, and `/shared/state` are for collaboration.

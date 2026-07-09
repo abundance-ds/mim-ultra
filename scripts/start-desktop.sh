@@ -38,7 +38,7 @@ DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS
 GTK_MODULES=$GTK_MODULES
 NO_AT_BRIDGE=$NO_AT_BRIDGE
 EOF
-chmod 600 /tmp/mim-desktop.env
+chmod 644 /tmp/mim-desktop.env
 
 # Start AT-SPI registry daemon
 /usr/libexec/at-spi2-registryd &
@@ -77,8 +77,32 @@ sleep 1
 # Start browser terminal for Claude Code
 if command -v ttyd >/dev/null 2>&1 && command -v tmux >/dev/null 2>&1; then
   pkill -f "ttyd .*7681" 2>/dev/null || true
+  CLAUDE_USER="${MIM_CLAUDE_USER:-agent}"
+  CLAUDE_HOME="${MIM_CLAUDE_HOME:-$MIM_AGENT_DIR/home}"
+  mkdir -p "$CLAUDE_HOME"
+  chmod a+rwx "$CLAUDE_HOME" 2>/dev/null || true
+  cat > /tmp/mim-start-claude-session <<EOF
+#!/bin/bash
+export HOME="$CLAUDE_HOME"
+export USER="$CLAUDE_USER"
+export LOGNAME="$CLAUDE_USER"
+export MIM_AGENT_DIR="$MIM_AGENT_DIR"
+export MIM_AGENT_HOME="$MIM_AGENT_HOME"
+export MIM_APP_DIR="$MIM_APP_DIR"
+exec bash "$MIM_APP_DIR/scripts/claude-code-session.sh"
+EOF
+  chmod 755 /tmp/mim-start-claude-session
+  if id "$CLAUDE_USER" >/dev/null 2>&1 && command -v setpriv >/dev/null 2>&1; then
+    CLAUDE_UID="$(id -u "$CLAUDE_USER")"
+    CLAUDE_GID="$(id -g "$CLAUDE_USER")"
+    CLAUDE_SESSION_CMD="setpriv --reuid=$CLAUDE_UID --regid=$CLAUDE_GID --init-groups /tmp/mim-start-claude-session"
+  elif id "$CLAUDE_USER" >/dev/null 2>&1; then
+    CLAUDE_SESSION_CMD="su -p -s /bin/bash '$CLAUDE_USER' -c /tmp/mim-start-claude-session"
+  else
+    CLAUDE_SESSION_CMD="bash '$MIM_APP_DIR/scripts/claude-code-session.sh'"
+  fi
   tmux has-session -t claude 2>/dev/null ||
-    tmux new-session -d -s claude "MIM_AGENT_DIR='$MIM_AGENT_DIR' MIM_AGENT_HOME='$MIM_AGENT_HOME' bash '$MIM_APP_DIR/scripts/claude-code-session.sh'"
+    tmux new-session -d -s claude "$CLAUDE_SESSION_CMD"
   ttyd -p 7681 -t titleFixed="claude code" \
     tmux attach-session -t claude &
   sleep 1

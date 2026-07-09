@@ -60,7 +60,7 @@ function flag(name, fallback) {
 
 const protocol = location.protocol === "https:" ? "wss" : "ws";
 const host = params.get("host") || location.hostname;
-const port = params.get("port") || "6080";
+const port = params.get("port") || "__VNC_PUBLIC_PORT__" || "6080";
 const path = params.get("path") || "websockify";
 const password = params.get("password") || "";
 

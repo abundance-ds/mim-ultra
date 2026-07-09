@@ -42,6 +42,8 @@ shared/vault/*
 *.AppImage
 
 # Runtime state
+agent/home/
+agent/sessions/
 shared/mailbox/*
 shared/artifacts/*
 shared/state/*
