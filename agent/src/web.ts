@@ -1,7 +1,8 @@
 import { spawn } from "child_process";
-import { accessSync, constants, existsSync, mkdirSync, readFileSync } from "fs";
+import { accessSync, chmodSync, constants, existsSync, mkdirSync, readFileSync, rmSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
+import { agentPath } from "./paths.js";
 
 export type WebAction =
   | "open"
@@ -204,7 +205,7 @@ async function ensureBrowser(): Promise<void> {
   if (await isBrowserReady()) return;
 
   const profileDir = process.env.MIM_WEB_PROFILE_DIR || defaultProfileDir();
-  mkdirSync(profileDir, { recursive: true });
+  prepareProfileDir(profileDir);
   const executable = await browserExecutable();
   if (!executable) {
     throw new Error(
@@ -215,6 +216,9 @@ async function ensureBrowser(): Promise<void> {
   const child = spawn(
     executable,
     [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
       "--no-first-run",
       "--remote-debugging-address=127.0.0.1",
       "--remote-debugging-port=9222",
@@ -225,6 +229,7 @@ async function ensureBrowser(): Promise<void> {
       detached: true,
       stdio: "ignore",
       env: desktopEnv(),
+      cwd: process.env.MIM_AGENT_HOME || process.cwd(),
     }
   );
   let startupError: Error | null = null;
@@ -245,6 +250,22 @@ async function ensureBrowser(): Promise<void> {
     if (await isBrowserReady()) return;
   }
   throw new Error(`Chromium did not expose its browser control port on ${DEBUG_PORT}.`);
+}
+
+function prepareProfileDir(profileDir: string): void {
+  mkdirSync(profileDir, { recursive: true });
+  try {
+    chmodSync(profileDir, 0o777);
+  } catch {
+    /* best effort for bind-mounted profiles */
+  }
+  for (const name of ["SingletonLock", "SingletonSocket", "SingletonCookie"]) {
+    try {
+      rmSync(join(profileDir, name), { force: true });
+    } catch {
+      /* stale Chromium lock cleanup is best effort */
+    }
+  }
 }
 
 async function browserExecutable(): Promise<string | null> {
@@ -284,7 +305,7 @@ function defaultProfileDir(): string {
   if (existsSync(snapCommon) || existsSync("/snap/bin/chromium")) {
     return join(snapCommon, "mim-web-profile");
   }
-  return join(process.cwd(), "agent", "browser-profile");
+  return agentPath("browser-profile");
 }
 
 function desktopEnv(): NodeJS.ProcessEnv {

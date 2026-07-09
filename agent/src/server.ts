@@ -735,6 +735,11 @@ const server = createServer(async (req, res) => {
   }
 });
 
+server.on("clientError", (error, socket) => {
+  console.error("http client error:", error.message);
+  if (socket.writable) socket.end("HTTP/1.1 400 Bad Request\r\n\r\n");
+});
+
 server.listen(PORT, () => {
   console.log(`mim agent server on http://localhost:${PORT}`);
   console.log(`model: ${MODEL}`);
@@ -752,26 +757,27 @@ server.listen(PORT, () => {
   });
 });
 
+function markInternalError(reason: unknown) {
+  try {
+    console.error(reason);
+    setAgentState({
+      status: "idle",
+      tool: null,
+      detail: "internal error",
+      contextTokens: getContextStats().contextTokens,
+      messages: messages.length,
+    });
+  } catch (stateError) {
+    console.error("failed to record internal error:", stateError);
+  }
+}
+
 process.on("uncaughtException", (error) => {
-  console.error("uncaught exception:", error);
-  setAgentState({
-    status: "idle",
-    tool: null,
-    detail: "internal error",
-    contextTokens: getContextStats().contextTokens,
-    messages: messages.length,
-  });
+  markInternalError(error);
 });
 
 process.on("unhandledRejection", (reason) => {
-  console.error("unhandled rejection:", reason);
-  setAgentState({
-    status: "idle",
-    tool: null,
-    detail: "internal error",
-    contextTokens: getContextStats().contextTokens,
-    messages: messages.length,
-  });
+  markInternalError(reason);
 });
 
 process.once("exit", () => markAgentOffline());
