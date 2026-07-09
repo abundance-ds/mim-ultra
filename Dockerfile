@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xfce4-terminal mousepad thunar gnome-calculator \
     surf epiphany-browser \
     polybar socat \
+    libnspr4 libnss3 \
     gcc pkg-config libdbus-1-dev libatspi2.0-dev libglib2.0-dev \
     curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -62,6 +63,11 @@ RUN mkdir -p /agent /agent-seed /shared
 # Node dependencies (cached unless package.json changes)
 COPY package.json ./
 RUN npm install
+ENV PLAYWRIGHT_BROWSERS_PATH=/root/.cache/ms-playwright
+RUN if [ -d /root/.cache/ms-playwright ]; then \
+        chmod a+x /root /root/.cache && \
+        chmod -R a+rX /root/.cache/ms-playwright; \
+    fi
 
 # Runtime shell and initial agent seed.
 COPY scripts/ /app/scripts/

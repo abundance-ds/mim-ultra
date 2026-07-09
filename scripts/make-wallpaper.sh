@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 EARTH="${1:-$HOME/Desktop/img/earth.jpg}"
-WORDMARK="${2:-$HOME/Desktop/img/mim-os-wordmark-white.svg}"
+WORDMARK="${2:-$REPO_DIR/assets/mim-ultra-wordmark-white.svg}"
 OUT="${3:-$REPO_DIR/assets/wallpaper.png}"
 
 if ! command -v magick >/dev/null 2>&1; then
@@ -37,8 +37,8 @@ EARTH_ROTATION=-44
 DISK_CENTER_X=750
 DISK_CENTER_Y=344
 DISK_RADIUS=532
-WORDMARK_W=168
-WORDMARK_X=1072
+WORDMARK_W=224
+WORDMARK_X=1016
 WORDMARK_Y=718
 
 magick "$EARTH" \
