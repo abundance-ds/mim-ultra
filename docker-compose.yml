@@ -1,0 +1,15 @@
+services:
+  mim:
+    build: .
+    ports:
+      - "${MIM_PORT:-7090}:7080"
+      - "${VNC_PORT:-6090}:6080"
+      - "${TTYD_PORT:-7690}:7681"
+    env_file: .env
+    volumes:
+      - agent-data:/app/agent
+      - ./shared:/shared
+    restart: unless-stopped
+
+volumes:
+  agent-data:

@@ -1,0 +1,48 @@
+# Compiled binaries
+/atspi-tool
+/cdp
+
+# Build artifacts
+*.o
+*.a
+*.so
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+/tmp/
+*.log
+
+# Temp
+.DS_Store
+
+# Node
+node_modules/
+dist/
+package-lock.json
+
+# Python
+__pycache__/
+*.pyc
+
+# Secrets
+.env
+.env.local
+credentials.json
+agent/secrets.vault.json
+
+# Binaries / releases
+*.AppImage
+
+# Runtime state
+shared/mailbox/*
+shared/artifacts/*
+shared/state/*
+!shared/**/.gitkeep
+
+# Scratch
+ce_plane.png

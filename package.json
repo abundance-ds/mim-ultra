@@ -1,0 +1,21 @@
+{
+  "name": "mim-agent",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "agent": "tsx src/cli.ts",
+    "serve": "tsx src/server.ts",
+    "mim": "tsx src/tool-cli.ts"
+  },
+  "dependencies": {
+    "ai": "4.1.66",
+    "@ai-sdk/anthropic": "1.2.12",
+    "zod": "^3.25"
+  },
+  "devDependencies": {
+    "tsx": "^4",
+    "typescript": "^5",
+    "@types/node": "^22"
+  }
+}

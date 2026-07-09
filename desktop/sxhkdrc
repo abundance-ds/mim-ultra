@@ -1,0 +1,17 @@
+alt + F4
+	bspc node -c
+
+alt + Tab
+	bspc node -f next.local.!hidden.window || bspc node -f first.local.!hidden.window
+
+alt + shift + Tab
+	bspc node -f prev.local.!hidden.window || bspc node -f last.local.!hidden.window
+
+alt + space
+	bspc node -t ~floating
+
+alt + t
+	bspc desktop -l tiled; for id in $(bspc query -N -n .floating); do bspc node "$id" -t tiled; done
+
+alt + m
+	bspc desktop -l monocle

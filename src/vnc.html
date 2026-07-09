@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MIM desktop</title>
+<style>
+  html, body, #screen {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #000;
+  }
+
+  body {
+    display: grid;
+    place-items: stretch;
+  }
+
+  #screen {
+    position: relative;
+  }
+
+  #screen > div {
+    overflow: hidden !important;
+  }
+
+  #screen canvas {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .sr-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="screen" aria-label="Agent desktop"></div>
+<div id="status" class="sr-status" aria-live="polite">connecting</div>
+
+<script type="module">
+import RFB from "/novnc/core/rfb.js";
+
+const params = new URLSearchParams(location.search);
+const status = document.getElementById("status");
+const screen = document.getElementById("screen");
+
+function flag(name, fallback) {
+  const value = params.get(name);
+  if (value === null) return fallback;
+  return !["0", "false", "off", "no"].includes(value.toLowerCase());
+}
+
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+const host = params.get("host") || location.hostname;
+const port = params.get("port") || "6080";
+const path = params.get("path") || "websockify";
+const password = params.get("password") || "";
+
+const rfb = new RFB(screen, `${protocol}://${host}:${port}/${path}`, {
+  credentials: { password },
+  shared: true,
+});
+
+rfb.viewOnly = flag("view_only", false);
+rfb.scaleViewport = flag("scale", true);
+rfb.resizeSession = flag("resize", false);
+rfb.focusOnClick = true;
+
+rfb.addEventListener("connect", () => {
+  status.textContent = "connected";
+});
+
+rfb.addEventListener("disconnect", (event) => {
+  status.textContent = event.detail.clean ? "disconnected" : "connection closed";
+});
+</script>
+</body>
+</html>
