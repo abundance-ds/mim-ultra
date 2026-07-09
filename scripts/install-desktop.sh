@@ -1,17 +1,12 @@
 #!/bin/bash
-# Install the level 1-2 desktop packages and MIM desktop config inside the VM.
+# Install desktop packages and MIM desktop config inside a Debian/Ubuntu container.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-VM_NAME="${VM_NAME:-agent-desktop}"
 
 if ! command -v apt-get >/dev/null 2>&1; then
-  if command -v orbctl >/dev/null 2>&1; then
-    quoted_dir="${REPO_DIR//\'/\'\\\'\'}"
-    exec orbctl run -m "$VM_NAME" bash -lc "cd '$quoted_dir' && ./scripts/install-desktop.sh"
-  fi
-  echo "install-desktop.sh must run inside the VM, or on a host with orbctl" >&2
+  echo "install-desktop.sh must run inside a Debian/Ubuntu container" >&2
   exit 1
 fi
 

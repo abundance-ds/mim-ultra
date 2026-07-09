@@ -9,14 +9,13 @@ export GTK_MODULES=gail:atk-bridge
 export NO_AT_BRIDGE=0
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-MIM_APP_DIR="${MIM_APP_DIR:-$SCRIPT_DIR}"
+REPO_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+MIM_APP_DIR="${MIM_APP_DIR:-$REPO_DIR}"
 if [ -z "${MIM_AGENT_DIR:-}" ]; then
   if [ -f /agent/src/server.ts ]; then
     MIM_AGENT_DIR="/agent"
-  elif [ -f "$SCRIPT_DIR/agent/src/server.ts" ]; then
-    MIM_AGENT_DIR="$SCRIPT_DIR/agent"
-  elif [ -f "$SCRIPT_DIR/src/server.ts" ]; then
-    MIM_AGENT_DIR="$SCRIPT_DIR"
+  elif [ -f "$REPO_DIR/agent/src/server.ts" ]; then
+    MIM_AGENT_DIR="$REPO_DIR/agent"
   else
     MIM_AGENT_DIR="/agent"
   fi

@@ -64,8 +64,8 @@ This means edits made by the human on the host and edits made by the agent in th
 ```text
 Dockerfile
 docker-compose.yml
-docker-entrypoint.sh
-start-desktop.sh
+scripts/docker-entrypoint.sh
+scripts/start-desktop.sh
 scripts/claude-code-session.sh
 agent/AGENTS.md
 agent/src/server.ts

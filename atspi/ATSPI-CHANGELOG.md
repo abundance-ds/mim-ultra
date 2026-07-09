@@ -22,8 +22,8 @@ The desktop could be visible in VNC with Surf showing Reddit login, but `atspi r
 - `atspi interact` now walks deeper through WebKit trees and preserves editable `embedded` controls, so Reddit login fields appear in the flat interaction list.
 
 ### Check
-- Reinstalled `/usr/local/bin/atspi` in the VM.
-- Recompiled and reinstalled `/opt/atspi-tool` in the VM.
+- Reinstalled `/usr/local/bin/atspi` in the container.
+- Recompiled and reinstalled `/opt/atspi-tool` in the container.
 - Fresh `atspi open "surf https://www.reddit.com/login"` produced a readable tree containing Reddit's login dialog, username/email field, password field, and login button.
 - `atspi interact surf` now includes `Email or username` and `Password`.
 - The launched Surf process now has the desktop session bus address in its environment.

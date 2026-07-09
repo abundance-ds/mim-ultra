@@ -24,11 +24,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     rm -rf /var/lib/apt/lists/*
 
 # Native C tool
-COPY atspi-tool.c /tmp/build/
+COPY atspi/atspi-tool.c /tmp/build/
 RUN gcc -O2 -o /opt/atspi-tool /tmp/build/atspi-tool.c $(pkg-config --cflags --libs atspi-2 gobject-2.0 dbus-1) -lm && \
     rm -rf /tmp/build
 
-COPY atspi-wrapper.sh /usr/local/bin/atspi
+COPY atspi/atspi-wrapper.sh /usr/local/bin/atspi
 RUN chmod +x /usr/local/bin/atspi
 
 # Desktop config
@@ -58,13 +58,13 @@ WORKDIR /app
 RUN mkdir -p /agent /agent-seed /shared
 
 # Node dependencies (cached unless package.json changes)
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 
 # Runtime shell and initial agent seed.
-COPY docker-entrypoint.sh start-desktop.sh ./
-COPY scripts/claude-code-session.sh /app/scripts/claude-code-session.sh
+COPY scripts/ /app/scripts/
+RUN chmod +x /app/scripts/docker-entrypoint.sh /app/scripts/start-desktop.sh /app/scripts/claude-code-session.sh
 COPY agent/ /agent-seed/
 
 EXPOSE 6080 7080 7681
-ENTRYPOINT ["/app/docker-entrypoint.sh"]
+ENTRYPOINT ["/app/scripts/docker-entrypoint.sh"]

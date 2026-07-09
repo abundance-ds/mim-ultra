@@ -20,10 +20,29 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 ## Current File Tree
 
 ```text
+/repo
+├── README.md
+├── Dockerfile
+├── docker-compose.yml
+├── package.json
+├── tsconfig.json
+├── agent/
+├── atspi/
+├── desktop/
+├── scripts/
+├── shared/
+├── assets/
+└── docs/
+```
+
+## Runtime File Tree
+
+```text
 /app
-├── docker-entrypoint.sh
-├── start-desktop.sh
-├── scripts/claude-code-session.sh
+├── scripts/
+│   ├── docker-entrypoint.sh
+│   ├── start-desktop.sh
+│   └── claude-code-session.sh
 ├── node_modules/
 └── package.json
 
@@ -39,8 +58,7 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 │   └── sessions.ts
 ├── tools/
 ├── scripts/
-├── sessions/
-└── notes.md
+└── sessions/
 
 /shared
 ├── mailbox/

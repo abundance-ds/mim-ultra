@@ -21,7 +21,7 @@ export MIM_SHARED_HOME=/shared
 export MIM_SECRET_VAULT="${MIM_SECRET_VAULT:-/shared/vault/secrets.vault.json}"
 
 # Start desktop in background
-bash /app/start-desktop.sh &
+bash /app/scripts/start-desktop.sh &
 
 # Wait for D-Bus
 for i in $(seq 1 30); do

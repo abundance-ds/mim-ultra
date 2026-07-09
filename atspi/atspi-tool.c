@@ -2,7 +2,7 @@
  * atspi-tool.c — fast AT-SPI CLI for desktop automation
  *
  * Build:
- *   gcc -O2 -o /opt/atspi-tool /Users/waqr/atspi-tool.c \
+ *   gcc -O2 -o /opt/atspi-tool atspi/atspi-tool.c \
  *       $(pkg-config --cflags --libs atspi-2 gobject-2.0 dbus-1)
  */
 

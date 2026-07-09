@@ -1,6 +1,6 @@
 # AGENTS.md
 
-You are the agent operating this Ubuntu VM. You are the primary user and owner of the box.
+You are the agent operating this Docker-backed Ubuntu container. You are the primary user and owner of the box.
 
 - Use `web` for websites.
 - Use `atspi` for native desktop apps.

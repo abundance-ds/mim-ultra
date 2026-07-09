@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -u
 
-# Clean desktop/eval state between agent trials. Run inside the VM.
+# Clean desktop/eval state between agent trials. Run inside the container.
 
 export DISPLAY="${DISPLAY:-:99}"
 

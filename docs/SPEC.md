@@ -85,7 +85,7 @@ Traditional primitives like dock, desktop icons, app launcher, and free-floating
 
 This is not:
 
-- a locked-down compliance VM
+- a locked-down compliance sandbox
 - a human-operated remote desktop
 - a normal OS with an AI assistant bolted on
 - a tool where the human approves every meaningful move
@@ -110,7 +110,6 @@ Runtime state lives under:
 
 ```text
 agent/
-  notes.md
   sessions/
   tools/
 ```
@@ -260,7 +259,7 @@ agent-box-2: DISPLAY=:100, noVNC=6081, command=7081, browser=9223
 agent-box-3: DISPLAY=:101, noVNC=6082, command=7082, browser=9224
 ```
 
-Implementation could start with separate displays inside one VM, but the conceptual boundary should remain a box. Separate VMs may be cleaner for isolation.
+Implementation can start with separate displays inside one container, but the conceptual boundary should remain a box. Separate containers may be cleaner for isolation.
 
 ## Shared Folder Model
 
@@ -407,7 +406,7 @@ This gives multi-agent behavior without multiple agents corrupting one shared GU
 
 ## Near-Term MVP
 
-Use the current `agent-desktop` VM as the first box prototype.
+Use the current Docker container as the first box prototype.
 
 Next practical steps:
 
@@ -421,9 +420,9 @@ Next practical steps:
 
 ## Current Prototype
 
-`src/server.ts` is the single-box command center.
+`agent/src/server.ts` is the single-box command center.
 
-It runs on port `7080` and provides:
+It runs on container port `7080`, mapped to host port `7090` by default, and provides:
 
 - AI SDK chat with streaming tool events
 - embedded noVNC desktop view
@@ -436,7 +435,7 @@ This does not replace Ubuntu yet. It reframes Ubuntu as the compatibility substr
 
 ## Open Questions
 
-- Separate OrbStack VMs or multiple displays inside one VM for early prototypes?
+- Separate Docker containers or multiple displays inside one container for early prototypes?
 - Should the left rail include a real terminal, or only a command/scratchpad abstraction?
 - What tile counts are worth supporting first: 1, 2, 4, 6, 8?
 - How much reasoning trace should the user see by default?

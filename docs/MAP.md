@@ -30,8 +30,7 @@
 ├── src/
 ├── tools/
 ├── scripts/
-├── sessions/
-└── notes.md
+└── sessions/
 ```
 
 ## Shared Space
