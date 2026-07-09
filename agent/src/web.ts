@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { existsSync, mkdirSync, readFileSync } from "fs";
+import { accessSync, constants, existsSync, mkdirSync, readFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 
@@ -205,9 +205,15 @@ async function ensureBrowser(): Promise<void> {
 
   const profileDir = process.env.MIM_WEB_PROFILE_DIR || defaultProfileDir();
   mkdirSync(profileDir, { recursive: true });
+  const executable = await browserExecutable();
+  if (!executable) {
+    throw new Error(
+      "No Chromium-compatible browser found. Set MIM_BROWSER_BIN or install chromium-browser."
+    );
+  }
 
   const child = spawn(
-    "chromium-browser",
+    executable,
     [
       "--no-first-run",
       "--remote-debugging-address=127.0.0.1",
@@ -221,14 +227,55 @@ async function ensureBrowser(): Promise<void> {
       env: desktopEnv(),
     }
   );
+  let startupError: Error | null = null;
+  child.once("error", (error) => {
+    startupError = new Error(`Failed to start browser '${executable}': ${error.message}`);
+  });
+  child.once("exit", (code, signal) => {
+    startupError ??= new Error(
+      `Browser '${executable}' exited before becoming ready (${signal ?? `code ${code ?? 0}`}).`
+    );
+  });
   child.unref();
 
   const deadline = Date.now() + 15_000;
   while (Date.now() < deadline) {
     sleep(250);
+    if (startupError) throw startupError;
     if (await isBrowserReady()) return;
   }
   throw new Error(`Chromium did not expose its browser control port on ${DEBUG_PORT}.`);
+}
+
+async function browserExecutable(): Promise<string | null> {
+  const candidates = [
+    process.env.MIM_BROWSER_BIN,
+    await playwrightChromiumExecutable(),
+    "/usr/bin/chromium-browser",
+    "/usr/bin/chromium",
+    "/snap/bin/chromium",
+  ].filter(Boolean) as string[];
+
+  for (const candidate of candidates) {
+    try {
+      accessSync(candidate, constants.X_OK);
+      return candidate;
+    } catch {
+      /* try next */
+    }
+  }
+  return null;
+}
+
+async function playwrightChromiumExecutable(): Promise<string | undefined> {
+  try {
+    const mod = await import("playwright-chromium");
+    const executable = mod.chromium.executablePath();
+    accessSync(executable, constants.X_OK);
+    return executable;
+  } catch {
+    return undefined;
+  }
 }
 
 function defaultProfileDir(): string {

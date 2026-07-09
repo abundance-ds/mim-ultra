@@ -752,6 +752,28 @@ server.listen(PORT, () => {
   });
 });
 
+process.on("uncaughtException", (error) => {
+  console.error("uncaught exception:", error);
+  setAgentState({
+    status: "idle",
+    tool: null,
+    detail: "internal error",
+    contextTokens: getContextStats().contextTokens,
+    messages: messages.length,
+  });
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("unhandled rejection:", reason);
+  setAgentState({
+    status: "idle",
+    tool: null,
+    detail: "internal error",
+    contextTokens: getContextStats().contextTokens,
+    messages: messages.length,
+  });
+});
+
 process.once("exit", () => markAgentOffline());
 process.once("SIGINT", () => {
   markAgentOffline();
