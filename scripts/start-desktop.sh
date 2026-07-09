@@ -25,9 +25,18 @@ export MIM_APP_DIR MIM_AGENT_DIR MIM_AGENT_HOME="${MIM_AGENT_HOME:-$MIM_AGENT_DI
 CONFIG_DIR="/usr/local/share/mim/desktop"
 WALLPAPER="/usr/local/share/mim/wallpaper.png"
 
+# Make this script safe to re-run inside a live container.
+killall Xvfb x11vnc websockify bspwm sxhkd polybar xfsettingsd at-spi2-registryd xwallpaper 2>/dev/null || true
+rm -f /tmp/.X99-lock /tmp/.X11-unix/X99 /tmp/mim-desktop.env
+
 # Start virtual framebuffer
 Xvfb :99 -screen 0 1280x800x24 &
+XVFB_PID=$!
 sleep 1
+if ! kill -0 "$XVFB_PID" 2>/dev/null || ! xset -display :99 q >/dev/null 2>&1; then
+  echo "ERROR: Xvfb failed to start on :99"
+  exit 1
+fi
 
 # Start D-Bus session bus
 eval $(dbus-launch --sh-syntax)
