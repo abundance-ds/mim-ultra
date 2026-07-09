@@ -29,6 +29,7 @@ If a file changes agent behavior or memory, it belongs in `/agent`. If multiple 
 - `/agent/src` is mutable agent/server/tool code.
 - `/agent/tools` is for agent-authored helper scripts.
 - `/agent/home` is Claude Code's persistent home/config.
+- `/agent/browser-profile` is the persistent Chromium profile used by the `web` tool.
 - `/agent/sessions` stores UI sessions and tool output.
 - `/shared/vault/secrets.vault.json` is the shared encrypted password vault.
 - `/shared/mailbox`, `/shared/artifacts`, and `/shared/state` are for collaboration.
@@ -42,6 +43,8 @@ The server starts from `/agent`:
 cd /agent
 /app/node_modules/.bin/tsx src/server.ts
 ```
+
+It runs as the non-root `agent` user.
 
 Claude Code starts from `/agent` through:
 

@@ -17,6 +17,16 @@ Agent-native Linux runtime.
 
 The Docker image can be rebuilt at any time. Anything important must be mounted at `/agent` or `/shared`.
 
+## Docs For New Agents
+
+Read in this order:
+
+1. `README.md` for the runtime model and folder maps.
+2. `docs/HANDOVER.md` for the persistence contract and launch path.
+3. `docs/MAP.md` for a compact runtime map.
+
+`docs/SPEC.md` is product vision and design notes, not current operational truth.
+
 ## Current File Tree
 
 ```text
@@ -59,6 +69,7 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 ├── tools/
 ├── scripts/
 ├── home/
+├── browser-profile/
 └── sessions/
 
 /shared
@@ -75,6 +86,7 @@ The Docker image can be rebuilt at any time. Anything important must be mounted 
 - Agent-editable source lives in `/agent/src`, so tool/server changes persist.
 - Agent-authored helper tools live in `/agent/tools`.
 - Claude Code home/config lives in `/agent/home`.
+- The web tool's Chromium profile lives in `/agent/browser-profile`.
 - Sessions and tool output live in `/agent/sessions`.
 - Shared passwords live in `/shared/vault/secrets.vault.json`, encrypted.
 - Cross-agent files live under `/shared`.

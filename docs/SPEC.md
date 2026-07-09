@@ -1,5 +1,15 @@
 # AI-Native OS Spec Notes
 
+This is product vision and design history, not current runtime handover.
+
+For current operational truth, read:
+
+```text
+README.md
+docs/HANDOVER.md
+docs/MAP.md
+```
+
 Date: 2026-07-08
 Status: working direction, not a committed product spec
 

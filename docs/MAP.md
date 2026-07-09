@@ -31,6 +31,7 @@
 ├── tools/
 ├── scripts/
 ├── home/
+├── browser-profile/
 └── sessions/
 ```
 
